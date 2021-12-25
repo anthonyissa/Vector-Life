@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.animation import FuncAnimation
 
 vecteur = np.array([[1],
                     [0]])
@@ -43,3 +44,24 @@ def construireDroite(x1, y1, x2, y2):
 
 
 print(toucheLaDroite(construireVecteur(0, 1), construireVecteur(1, 0.5), construireDroite(2, 2, 2, 0)))
+
+
+x_data = []
+y_data = []
+
+fig, ax = plt.subplots()
+ax.set_xlim(0, 12)
+ax.set_ylim(0, 12)
+line, = ax.plot(1, 5)
+
+def animation_frame(i):
+    angle = input()
+    x_data.append(i*1)
+    y_data.append(i*int(angle))
+
+    line.set_xdata(x_data)
+    line.set_ydata(y_data)
+    return line,
+
+animation = FuncAnimation(fig, func=animation_frame, frames=np.arange(0, 10, 0.1), interval=10)
+plt.show()
