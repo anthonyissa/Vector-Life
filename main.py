@@ -7,7 +7,36 @@ origine = np.array([[-2],
                     [4]])
 
 droite = np.array([[1, 5],
-                    [1, 4]])
+                   [1, 4]])
+
+mur1 = np.array([[0, 0],
+                 [0, 8]])
+mur2 = np.array([[0, 10],
+                 [0, 0]])
+mur3 = np.array([[10, 10],
+                 [2, 10]])
+mur4 = np.array([[0, 10],
+                 [10, 10]])
+entree = np.array([[0, 0],
+                 [8, 10]])
+sortie = np.array([[10, 10],
+                 [0, 2]])
+
+
+"""
+{ 00 0-10  10-0  10-10 }
+ _ _ _ _ _ _ _ _ _ _
+e                    |
+e                    |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    s
+| _ _ _ _ _ _ _ _ _ _s
+"""
 
 def calculT(origineVecteur, vecteur, droite):
     droiteAS = np.array([[droite[0][0], origineVecteur[0][0]],
@@ -42,4 +71,21 @@ def construireDroite(x1, y1, x2, y2):
                        [y1, y2]])
 
 
-print(toucheLaDroite(construireVecteur(0, 1), construireVecteur(1, 0.5), construireDroite(2, 2, 2, 0)))
+#print(toucheLaDroite(construireVecteur(0, 1), construireVecteur(1, 0.5), construireDroite(2, 2, 2, 0)))
+
+
+
+
+k = 2*np.pi
+w = 2*np.pi
+dt = 0.01
+
+x = np.linspace(0, 3, 151)
+
+for i in range(500):
+    t = i * dt
+    y = np.cos(k*x - w*t)
+    plt.plot(x, y)
+    plt.pause(0.01) # pause avec duree en secondes
+
+plt.show()
