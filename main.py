@@ -1,3 +1,5 @@
+import math
+
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.lines as mlines
@@ -54,6 +56,10 @@ def vDirecteur(droite):
     return np.array([[droite[:, 1][0] - droite[:, 0][0]],
                      [droite[:, 1][1] - droite[:, 0][1]]])
 
+def normeVecteur(v1) :
+    print(v1)
+    ca = v1[0]**2 + v1[1]**2
+    return math.sqrt(ca)
 
 def construireVecteur(x, y):
     return np.array([[x],
@@ -64,6 +70,11 @@ def construireDroite(x1, y1, x2, y2):
     return np.array([[x1, x2],
                      [y1, y2]])
 
+
+droitetest = construireDroite(0, 2, 1, 1)
+vec = vDirecteur(droitetest)
+nv = normeVecteur(vec)
+print(nv)
 
 mur1 = construireDroite(0, 0, 0, 8)
 mur2 = construireDroite(0, 0, 0, 8)
