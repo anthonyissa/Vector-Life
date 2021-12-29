@@ -5,6 +5,8 @@ import numpy as np
 import matplotlib.lines as mlines
 from matplotlib.animation import FuncAnimation
 
+translationDuMoment = np.array([[0],
+                            [0]])
 vecteur = np.array([[1],
                     [0]])
 origine = np.array([[-2],
@@ -35,13 +37,20 @@ def toucheLaDroite(origineVecteur, vecteur, droite):
         return None
 
 def vecteurEngendre(vecteur, vecteurNormal):
-    if(np.dot(vecteur, np.transpose(vecteurNormal))[0][0] < 0):
-        vecteurNormal = np.array([-vecteurNormal[0][0]],
-                                 [-vecteurNormal[1][0]])
+    #print(vecteurNormal)
+    if(np.dot(np.transpose(vecteurNormal), vecteur ) < 0):
+        vecteurNormal = np.array([[-vecteurNormal[0][0]],
+                                 [-vecteurNormal[1][0]]])
+    #print(vecteurNormal)
+    #print(np.dot(vecteur, np.transpose(vecteur))[1][1])
+    hypo = math.sqrt(np.dot(np.transpose(vecteur),vecteur))
 
-    print(np.dot(vecteur, np.transpose(vecteurNormal))[1][1])
-    hypo = math.sqrt(np.dot(vecteur, np.transpose(vecteur))[0][0])
-    adjacent = ( (abs(np.dot(vecteur, np.transpose(vecteurNormal))[1][1]))/math.sqrt(np.dot(vecteurNormal, np.transpose(vecteurNormal))[1][1]))
+
+
+
+    adjacent = ( (abs(np.dot( np.transpose(vecteurNormal),vecteur)))/math.sqrt(np.dot( np.transpose(vecteurNormal),vecteurNormal)))
+    print(np.arccos(adjacent / hypo))
+    print('prouitcul')
     angle = math.degrees(np.arccos(adjacent/hypo))
     print(angle)
 
@@ -69,12 +78,30 @@ def construireDroite(x1, y1, x2, y2):
                      [y1, y2]])
 
 
-print(toucheLaDroite(construireVecteur(0, 2), construireVecteur(1, -1), droite))
+#print(toucheLaDroite(construireVecteur(0, 2), construireVecteur(1, -1), droite))
 vecteurEngendre(construireVecteur(1, -1), vNormal(construireVecteur(1, 0)))
 
-print(toucheLaDroite(construireVecteur(0, 1), construireVecteur(1, 0.5), construireDroite(2, 2, 2, 0)))
+#print(toucheLaDroite(construireVecteur(0, 1), construireVecteur(1, 0.5), construireDroite(2, 2, 2, 0)))
+
+def mat_rotation(theta):
+    # si pas besoin des coordonnées homogènes
+    mat = np.array([[np.cos(theta), -np.sin(theta)],
+                    [np.sin(theta), np.cos(theta)]])
+    return mat
 
 
+def mat_translationOrigine(pointimpact,vect) :
+    translationDuMoment = -v1
+    print(translationDuMoment)
+
+
+mat_translationOrigine(construireVecteur(2,2))
+def rotationApresImpact(v1):
+
+
+    vectR = mat_rotation()
+
+    return vectR
 """
 x_data = []
 y_data = []
@@ -94,28 +121,18 @@ def animation_frame(i):
     return line,
 
 animation = FuncAnimation(fig, func=animation_frame, frames=np.arange(0, 10, 0.1), interval=10)
-plt.show()"""
+plt.show()
 droitetest = construireDroite(0, 2, 1, 1)
 vec = vDirecteur(droitetest)
 nv = normeVecteur(vec)
 print(nv)
-
+"""
 mur1 = construireDroite(0, 0, 0, 8)
 mur2 = construireDroite(0, 0, 0, 8)
 mur3 = construireDroite(0, 0, 0, 8)
 mur4 = construireDroite(0, 0, 0, 8)
-
-
-mur2 = np.array([[0, 10],
-                 [0, 0]])
-mur3 = np.array([[10, 10],
-                 [2, 10]])
-mur4 = np.array([[0, 10],
-                 [10, 10]])
-entree = np.array([[0, 0],
-                   [8, 10]])
-sortie = np.array([[10, 10],
-                   [0, 2]])
+entree = construireDroite(0, 8, 0, 10)
+sortie = construireDroite(10, 0, 10, 2)
 
 
 def visu_point(matPoint, style):
@@ -131,20 +148,13 @@ def visu_segment(P1, P2, style):
     visu_point(matP, style)
 
 
-def mat_rotation(theta):
-    # si pas besoin des coordonnées homogènes
-    mat = np.array([[np.cos(theta), -np.sin(theta)],
-                    [np.sin(theta), np.cos(theta)]])
-    return mat
 
 
 def getPointFromMatrice(numPoint, matricePts):
     pt = np.array([[matricePts[0][0], matricePts[1][0]],
                    [matricePts[0][1], matricePts[1][1]]])
-    if (numPoint == 1):
-        return pt[0]
-    if (numPoint == 2):
-        return pt[1]
+    return pt[numPoint-1]
+
 
 
 x = np.linspace(0, 10, 100)
