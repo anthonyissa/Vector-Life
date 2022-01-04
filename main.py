@@ -5,10 +5,6 @@ import numpy as np
 import matplotlib.lines as mlines
 from matplotlib.animation import FuncAnimation
 
-vecteur = np.array([[1],[-0.5]])
-origine = np.array([[0],[9]])
-droite = np.array([[-2,10 ],[-2, 10]])
-
 translation = None
 
 # Trouve T
@@ -35,7 +31,7 @@ def toucheLaDroite(origineVecteur, vecteur, droite):
         return None
 
 
-# Retourne l'angle du vecteur
+"""# Retourne l'angle du vecteur
 def vecteurEngendre(vecteur, vecteurNormal):
     if(np.dot(np.transpose(vecteurNormal), vecteur ) > 0):
         vecteurNormal = np.array([[-vecteurNormal[0][0]],
@@ -44,41 +40,33 @@ def vecteurEngendre(vecteur, vecteurNormal):
     adjacent = ((abs(np.dot( np.transpose(vecteurNormal),vecteur)))/math.sqrt(np.dot( np.transpose(vecteurNormal),vecteurNormal)))
 
     return math.degrees(np.arccos(adjacent/hypo))
-
+"""
 # Retourne le vecteur apres la rotation
-def rotationVecteur(vect, impact, theta):
+def rotationVecteur(vect, impact, vecteurNormal):
     if impact is None :
         return None
-    rotation = theta
-    x = vect[0][0]
-    y = vect[1][0]
-
-    if(x*y < 0 or (x == 0 and y > 0) or (y == 0 and x > 0) ):
-        rotation = -theta
-
-    boutDuVecteur = impact+vect
-
-    #matrice rotation
-    mat = np.array([[np.cos(rotation), -np.sin(rotation)],
-                    [np.sin(rotation), np.cos(rotation)]])
-    premierResultat = np.dot(mat,boutDuVecteur)
-    if sontColineaires(premierResultat, vect):
-        mat2 = np.array([[np.cos(-rotation), -np.sin(-rotation)],
-                        [np.sin(-rotation), np.cos(-rotation)]])
-        return np.dot(mat2,boutDuVecteur),impact
-    else:
-        return premierResultat,impact
+    if(np.dot(np.transpose(vecteurNormal), vecteur ) > 0):
+        vecteurNormal = np.array([[-vecteurNormal[0][0]],
+                                 [-vecteurNormal[1][0]]])
+    x = 2 * (np.dot(np.transpose(vect), vecteurNormal)/(normeVecteur(vecteurNormal)**2))
+    x = x[0][0]
+    return np.array([[vect[0][0]-(x*vecteurNormal[0][0])],
+                     [vect[1][0]-(x*vecteurNormal[1][0])]]), impact
 
 def vNormal(vecteur):
+    n = np.array([[-vecteur[1, :][0]],
+                     [vecteur[0, :][0]]])
     return np.array([[-vecteur[1, :][0]],
                      [vecteur[0, :][0]]])
+
+
 
 def vDirecteur(droite):
     return np.array([[droite[:, 1][0] - droite[:, 0][0]],
                      [droite[:, 1][1] - droite[:, 0][1]]])
 
 def normeVecteur(v1) :
-    ca = v1[0]**2 + v1[1]**2
+    ca = np.dot(np.transpose(v1), v1)
     return math.sqrt(ca)
 
 def construireVecteur(x, y):
@@ -93,9 +81,22 @@ def construireDroite(x1, y1, x2, y2):
     return np.array([[x1, x2],
                      [y1, y2]])
 
-
-
-
+def trouvePlusProche(origine, liste):
+    distances =  {-1 : 999999999.0}
+    i = 0
+    
+    for point in liste:
+        if point is not None:
+            if(math.sqrt(((origine[0][0] - point[0][0])**2) + ((origine[1][0] - point[1][0])**2)) !=0):
+                distances[i] = (math.sqrt(((origine[0][0] - point[0][0])**2) + ((origine[1][0] - point[1][0])**2)))
+        i += 1
+    
+    plusPetit = distances.get(-1)
+    for d in distances.values():
+        if d <= plusPetit:
+            plusPetit = d
+    return liste[distances.values().index(plusPetit)], liste.index(liste[distances.values().index(plusPetit)])
+    
 
 
 
@@ -108,34 +109,47 @@ sortie = construireDroite(10, 0, 10, 2)
 
 listemur = [mur1,mur2,mur3, mur4]
 endCond = [entree,sortie]
-segx1 = construireDroite(4, 9.5, 4, 2)
+segx1 = construireDroite(3, 10, 6, 7)
 segx2 = construireDroite(2.2, 7.27, 3.56, 4.31)
 segx3 = construireDroite(6.96, 5.43, 7.96, 3.21)
 segx4 = construireDroite(3.42, 2.19, 4.94, 0.55)
 
 map = [segx1,segx2,segx3,segx4]
 
-vdir = vDirecteur(construireDroite(0,9,1,8.5))
+tousLesMurs = map+listemur
+tousLesMurs2 = tousLesMurs
+vdir = vDirecteur(construireDroite(0,9,1,9))
 # rotationVecteur(vect, impact, theta):
 
-print(rotationVecteur(vNormal(vdir), toucheLaDroite(origine, vdir, segx1), vecteurEngendre(vdir, vNormal(vDirecteur(segx1)))))
+vecteur = np.array([[1],[0]])
+origine = np.array([[0],[9]])
 
-def construreSegments (liste) :
+for i in range(10):
+    listeImpactes = []
+    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles = 'xy', scale_units = 'xy', scale = 1)
+    for segment in tousLesMurs:
+        listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
+        
+    impact, indiceMur = trouvePlusProche(origine, listeImpactes)
+    vecteur, origine = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
+
+
+
+def construireSegments (liste) :
     for mur in liste:
         x = np.linspace(mur[0, :][0], mur[0, :][1], 2)
         y = np.linspace(mur[1, :][0], mur[1, :][1], 2)
         plt.scatter(x, y)
         plt.plot(x, y)
 
-construreSegments(listemur)
-construreSegments(map)
+construireSegments(listemur)
+construireSegments(map)
 
 
 def construireDroite(x1, y1, x2, y2):
     return np.array([[x1, x2],
                      [y1, y2]])
 
-plt.quiver(0, 9, 1, -0.5, angles = 'xy', scale_units = 'xy', scale = 1)
 
 
 plt.show()
