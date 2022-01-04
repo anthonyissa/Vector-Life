@@ -81,21 +81,26 @@ def construireDroite(x1, y1, x2, y2):
     return np.array([[x1, x2],
                      [y1, y2]])
 
+def get_key(val, liste):
+    for key, value in liste.items():
+         if val == value:
+             return key
+ 
 def trouvePlusProche(origine, liste):
     distances =  {-1 : 999999999.0}
     i = 0
     
     for point in liste:
-        if point is not None:
+        if point is not None and point[0][0]:
             if(math.sqrt(((origine[0][0] - point[0][0])**2) + ((origine[1][0] - point[1][0])**2)) !=0):
                 distances[i] = (math.sqrt(((origine[0][0] - point[0][0])**2) + ((origine[1][0] - point[1][0])**2)))
+                
         i += 1
-    
     plusPetit = distances.get(-1)
     for d in distances.values():
         if d <= plusPetit:
             plusPetit = d
-    return liste[distances.values().index(plusPetit)], liste.index(liste[distances.values().index(plusPetit)])
+    return liste[(get_key(plusPetit, distances))], liste.index(liste[distances.values().index(plusPetit)])
     
 
 
@@ -117,21 +122,21 @@ segx4 = construireDroite(3.42, 2.19, 4.94, 0.55)
 map = [segx1,segx2,segx3,segx4]
 
 tousLesMurs = map+listemur
-tousLesMurs2 = tousLesMurs
 vdir = vDirecteur(construireDroite(0,9,1,9))
 # rotationVecteur(vect, impact, theta):
 
-vecteur = np.array([[1],[0]])
+vecteur = np.array([[1],[0.2]])
 origine = np.array([[0],[9]])
+impact = np.array([[-1], [-99999]]) 
 
-for i in range(10):
+for i in range(3):
     listeImpactes = []
     plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles = 'xy', scale_units = 'xy', scale = 1)
     for segment in tousLesMurs:
         listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
-        
     impact, indiceMur = trouvePlusProche(origine, listeImpactes)
-    vecteur, origine = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
+    if(i!=2):
+        vecteur, origine = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
 
 
 
