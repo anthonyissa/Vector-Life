@@ -149,16 +149,14 @@ vecteur = np.array([[1],[0.2]])
 origine = np.array([[0],[9]])
 impact = np.array([[-1], [-99999]]) 
 
-for i in range(5):
+for i in range(10):
     listeImpactes = []
     plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles = 'xy', scale_units = 'xy', scale = 1)
     for segment in tousLesMurs:
-        print(segment)
         listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
 
     impact, indiceMur = trouvePlusProche(origine, listeImpactes)
-    if(i!=4):
-        vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
+    vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
 
     origine = impact
 
