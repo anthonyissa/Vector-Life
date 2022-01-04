@@ -37,9 +37,6 @@ def toucheLaDroite(origineVecteur, vecteur, droite):
 
 # Retourne l'angle du vecteur
 def vecteurEngendre(vecteur, vecteurNormal):
-    print(vecteur)
-    print(vecteurNormal)
-    print(np.dot(np.transpose(vecteurNormal), vecteur))
     if(np.dot(np.transpose(vecteurNormal), vecteur ) > 0):
         vecteurNormal = np.array([[-vecteurNormal[0][0]],
                                  [-vecteurNormal[1][0]]])
@@ -49,7 +46,7 @@ def vecteurEngendre(vecteur, vecteurNormal):
 
     return math.degrees(np.arccos(adjacent/hypo))
 
-# Retourne le vecteur après la rotation
+# Retourne le vecteur apres la rotation
 def rotationVecteur(vect, impact, theta):
     if impact is None :
         return None
@@ -66,10 +63,9 @@ def rotationVecteur(vect, impact, theta):
     mat = np.array([[np.cos(rotation), -np.sin(rotation)],
                     [np.sin(rotation), np.cos(rotation)]])
     premierResultat = np.dot(mat,boutDuVecteur)
-    if sontColinéaires(premierResultat, vect):
+    if sontColineaires(premierResultat, vect):
         mat2 = np.array([[np.cos(-rotation), -np.sin(-rotation)],
                         [np.sin(-rotation), np.cos(-rotation)]])
-        print("aaaaaaaaaaaaaaaaaaa")
         return np.dot(mat2,boutDuVecteur),impact
     else:
 
@@ -91,7 +87,7 @@ def construireVecteur(x, y):
     return np.array([[x],
                      [y]])
 
-def sontColinéaires(v1, v2):
+def sontColineaires(v1, v2):
     return int(v1[0][0])*int(v2[1][0]) == int(v1[1][0])*int(v2[0][0])
 
 
@@ -124,6 +120,7 @@ map = [segx1,segx2,segx3,segx4]
 vdir = vDirecteur(construireDroite(0,9,1,8.5))
 # rotationVecteur(vect, impact, theta):
 print(rotationVecteur(vdir, toucheLaDroite(origine, vdir, segx1), vecteurEngendre(vdir, vNormal(vDirecteur(segx1)))))
+
 def construreSegments (liste) :
     for mur in liste:
         x = np.linspace(mur[0, :][0], mur[0, :][1], 2)
@@ -175,7 +172,7 @@ print(nv)
 
 
 def visu_point(matPoint, style):
-    # matPoint contient les coordonnées des points
+    # matPoint contient les coordonnees des points
     x = matPoint[0, :]
     y = matPoint[1, :]
     plt.plot(x, y, style)
