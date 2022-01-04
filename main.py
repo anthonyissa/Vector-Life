@@ -43,7 +43,6 @@ def vecteurEngendre(vecteur, vecteurNormal):
     hypo = math.sqrt(np.dot(np.transpose(vecteur),vecteur))
     adjacent = ((abs(np.dot( np.transpose(vecteurNormal),vecteur)))/math.sqrt(np.dot( np.transpose(vecteurNormal),vecteurNormal)))
 
-
     return math.degrees(np.arccos(adjacent/hypo))
 
 # Retourne le vecteur apres la rotation
@@ -68,7 +67,6 @@ def rotationVecteur(vect, impact, theta):
                         [np.sin(-rotation), np.cos(-rotation)]])
         return np.dot(mat2,boutDuVecteur),impact
     else:
-
         return premierResultat,impact
 
 def vNormal(vecteur):
@@ -88,7 +86,7 @@ def construireVecteur(x, y):
                      [y]])
 
 def sontColineaires(v1, v2):
-    return int(v1[0][0])*int(v2[1][0]) == int(v1[1][0])*int(v2[0][0])
+    return v1[0][0]*v2[1][0] == v1[1][0]*v2[0][0]
 
 
 def construireDroite(x1, y1, x2, y2):
@@ -119,7 +117,8 @@ map = [segx1,segx2,segx3,segx4]
 
 vdir = vDirecteur(construireDroite(0,9,1,8.5))
 # rotationVecteur(vect, impact, theta):
-print(rotationVecteur(vdir, toucheLaDroite(origine, vdir, segx1), vecteurEngendre(vdir, vNormal(vDirecteur(segx1)))))
+
+print(rotationVecteur(vNormal(vdir), toucheLaDroite(origine, vdir, segx1), vecteurEngendre(vdir, vNormal(vDirecteur(segx1)))))
 
 def construreSegments (liste) :
     for mur in liste:
