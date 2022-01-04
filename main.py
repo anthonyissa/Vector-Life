@@ -17,6 +17,9 @@ def calculT(origineVecteur, vecteur, droite):
 
 # Retourne le point d'intersection
 def toucheLaDroite(origineVecteur, vecteur, droite):
+    if (origineVecteur[0][0] <= max(droite[0, :][0], droite[0, :][1]) and origineVecteur[0][0]  >= min(droite[0, :][0], droite[0, :][1])
+            and origineVecteur[1][0]  <= max(droite[1, :][0], droite[1, :][1]) and origineVecteur[1][0]  >= min(droite[1, :][0], droite[1, :][1])):
+        return None
     t = calculT(origineVecteur, vecteur, droite)
     if t < 0:
         return None
@@ -61,7 +64,7 @@ def rotationVecteur(vect, impact, vecteurNormal):
     x = 2 * (np.dot(np.transpose(vect), vecteurNormal)/(normeVecteur(vecteurNormal)**2))
     x = x[0][0]
     return np.array([[vect[0][0]-(x*vecteurNormal[0][0])],
-                     [vect[1][0]-(x*vecteurNormal[1][0])]]), impact
+                     [vect[1][0]-(x*vecteurNormal[1][0])]])
 
 def vNormal(vecteur):
     n = np.array([[-vecteur[1, :][0]],
@@ -95,22 +98,28 @@ def get_key(val, liste):
     for key, value in liste.items():
          if val == value:
              return key
- 
+
 def trouvePlusProche(origine, liste):
-    distances =  {-1 : 999999999.0}
+    clésDistance = []
+    valeursDistances = []
     i = 0
-    
     for point in liste:
-        if point is not None and point[0][0]:
-            if(math.sqrt(((origine[0][0] - point[0][0])**2) + ((origine[1][0] - point[1][0])**2)) !=0):
-                distances[i] = (math.sqrt(((origine[0][0] - point[0][0])**2) + ((origine[1][0] - point[1][0])**2)))
-                
+        if point is not None :
+                valeursDistances.append((math.sqrt(((origine[0][0] - point[0][0])**2) + ((origine[1][0] - point[1][0])**2))))
+                clésDistance.append(i)
         i += 1
-    plusPetit = distances.get(-1)
-    for d in distances.values():
+
+    for v in valeursDistances:
+        if v <= 0.1:
+            valeursDistances.remove(v)
+
+    plusPetit = valeursDistances[0]
+
+    for d in valeursDistances:
         if d <= plusPetit:
             plusPetit = d
-    return liste[(get_key(plusPetit, distances))], liste.index(liste[distances.values().index(plusPetit)])
+
+    return liste[clésDistance[valeursDistances.index(plusPetit)]], clésDistance[valeursDistances.index(plusPetit)]
     
 
 
@@ -126,12 +135,13 @@ listemur = [mur1,mur2,mur3, mur4]
 endCond = [entree,sortie]
 segx1 = construireDroite(3, 10, 6, 7)
 segx2 = construireDroite(2.2, 7.27, 3.56, 4.31)
-segx3 = construireDroite(6.96, 5.43, 7.96, 3.21)
+segx3 = construireDroite(6.96, 5.43, 7.5, 3.21)
 segx4 = construireDroite(3.42, 2.19, 4.94, 0.55)
 
 map = [segx1,segx2,segx3,segx4]
 
 tousLesMurs = map+listemur
+
 vdir = vDirecteur(construireDroite(0,9,1,9))
 # rotationVecteur(vect, impact, theta):
 
@@ -139,14 +149,18 @@ vecteur = np.array([[1],[0.2]])
 origine = np.array([[0],[9]])
 impact = np.array([[-1], [-99999]]) 
 
-for i in range(3):
+for i in range(5):
     listeImpactes = []
     plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles = 'xy', scale_units = 'xy', scale = 1)
     for segment in tousLesMurs:
+        print(segment)
         listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
+
     impact, indiceMur = trouvePlusProche(origine, listeImpactes)
-    if(i!=2):
-        vecteur, origine = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
+    if(i!=4):
+        vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
+
+    origine = impact
 
 
 
