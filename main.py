@@ -31,6 +31,16 @@ def toucheLaDroite(origineVecteur, vecteur, droite):
         return None
 
 
+"""def impactFinal(impact, entree, sortie):
+    if((impact[0][0] == sortie[0][0] and impact[1][0] <= 2 ) or
+    (impact[0][0] == entree[0][0] and impact[1][0] >= 8 ))
+        return True
+    else:   
+        return False"""
+
+
+
+        
 """# Retourne l'angle du vecteur
 def vecteurEngendre(vecteur, vecteurNormal):
     if(np.dot(np.transpose(vecteurNormal), vecteur ) > 0):
