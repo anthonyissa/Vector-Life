@@ -172,17 +172,16 @@ while True:
         listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
     impact, indiceMur = trouvePlusProche(origine, listeImpactes)
 
-    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles='xy', scale_units='xy',color="silver",
-               scale=(3))
+    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles='xy', scale_units='xy',color="blue",
+               scale=(2))
 
     plt.plot([origine[0][0],impact[0][0]],[origine[1][0],impact[1][0]])
 
     x = construireDroite(origine[0][0],impact[0][0],origine[1][0],impact[1][0])
     #mursEtCheminAffichés.append(x)
 
-    print(mursEtCheminAffichés)
     construireSegments(mursEtCheminAffichés)
-    plt.pause(0.5)
+    plt.pause(0.25)
     origine = impact
     if (verficarteurDeFin(impact)==False):
         break
@@ -192,8 +191,6 @@ while True:
 
 
 #affichage
-
-
 
 def construireDroite(x1, y1, x2, y2):
     return np.array([[x1, x2],
