@@ -124,6 +124,15 @@ tousLesMurs = map + listeDesMur + endCond
 mursEtCheminAffichés = map + listeDesMur
 vdir = vDirecteur(construireDroite(0,9,1,9))
 # rotationVecteur(vect, impact, theta):
+def construireSegments (liste) :
+    for mur in liste:
+        x = np.linspace(mur[0, :][0], mur[0, :][1], 2)
+        y = np.linspace(mur[1, :][0], mur[1, :][1], 2)
+        plt.scatter(x, y)
+        plt.plot(x, y,color ='black')
+
+construireSegments(mursEtCheminAffichés)
+plt.pause(0.1)
 print("ENTREZ LA PENTE DU VECTEUR")
 PENTE = input()
 
@@ -152,12 +161,7 @@ def verficarteurDeFin(impact):
         plt.title("YOU WIN IN " + str(nombreImapcts)+" IMPACTS")
     return not ((environEgal(0,impact[0]) and impact[1]>8 and impact[1]<10) or ((environEgal(10,impact[0]) and impact[1]>0 and impact[1]<2)) or nombreImapcts>difficulté)
 
-def construireSegments (liste) :
-    for mur in liste:
-        x = np.linspace(mur[0, :][0], mur[0, :][1], 2)
-        y = np.linspace(mur[1, :][0], mur[1, :][1], 2)
-        plt.scatter(x, y)
-        plt.plot(x, y,color ='black')
+
 
 def construirChemin (liste) :
     for seg in liste:
