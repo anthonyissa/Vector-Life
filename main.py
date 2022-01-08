@@ -1,4 +1,5 @@
 import math
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -36,27 +37,6 @@ def toucheLaDroite(origineVecteur, vecteur, droite):
     else:
         return None
 
-
-"""def impactFinal(impact, entree, sortie):
-    if((impact[0][0] == sortie[0][0] and impact[1][0] <= 2 ) or
-    (impact[0][0] == entree[0][0] and impact[1][0] >= 8 ))
-        return True
-    else:   3
-        return False"""
-
-
-
-        
-"""# Retourne l'angle du vecteur
-def vecteurEngendre(vecteur, vecteurNormal):
-    if(np.dot(np.transpose(vecteurNormal), vecteur ) > 0):
-        vecteurNormal = np.array([[-vecteurNormal[0][0]],
-                                 [-vecteurNormal[1][0]]])
-    hypo = math.sqrt(np.dot(np.transpose(vecteur),vecteur))
-    adjacent = ((abs(np.dot( np.transpose(vecteurNormal),vecteur)))/math.sqrt(np.dot( np.transpose(vecteurNormal),vecteurNormal)))
-
-    return math.degrees(np.arccos(adjacent/hypo))
-"""
 # Retourne le vecteur apres la rotation
 def rotationVecteur(vect, impact, vecteurNormal):
     if impact is None :
@@ -123,59 +103,96 @@ def trouvePlusProche(origine, liste):
 
     return liste[clésDistance[valeursDistances.index(plusPetit)]], clésDistance[valeursDistances.index(plusPetit)]
     
-
-
-
+#mapping
 mur1 = construireDroite(0, 0, 0, 8)
 mur2 = construireDroite(0, 10, 10, 10)
 mur3 = construireDroite(10, 10, 10, 2)
 mur4 = construireDroite(10, 0, 0, 0)
+listeDesMur = [mur1, mur2, mur3, mur4]
+
 entree = construireDroite(0, 8, 0, 10)
 sortie = construireDroite(10, 0, 10, 2)
+endCond = [entree, sortie]
 
-listemur = [mur1,mur2,mur3, mur4]
-endCond = [entree,sortie]
 segx1 = construireDroite(1, 3, 4, 1)
 segx2 = construireDroite(7, 8, 5, 3)
 segx3 = construireDroite(7, 1, 7, 3)
 segx4 = construireDroite(6, 8, 3, 9)
+map = [segx1, segx2, segx3, segx4]
 
-map = [segx1,segx2,segx3,segx4]
-
-tousLesMurs = map+listemur+endCond
-
+tousLesMurs = map + listeDesMur + endCond
+mursEtCheminAffichés = map + listeDesMur
 vdir = vDirecteur(construireDroite(0,9,1,9))
 # rotationVecteur(vect, impact, theta):
+print("ENTREZ LA PENTE DU VECTEUR")
+PENTE = input()
 
-vecteur = np.array([[1],[0.5]])
-origine = np.array([[0],[9]])
-impact = np.array([[0], [9]])
+vecteur = np.array([[1],[float(PENTE)]])
+origine = np.array([[0.2],[9]])
+impact = np.array([[0.2], [9]])
 ancienOrgine = origine
-for i in range(10):
-    listeImpactes = []
 
-    for segment in tousLesMurs:
-        listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
+nombreImapcts = 0
+difficulté = 15
 
-    impact, indiceMur = trouvePlusProche(origine, listeImpactes)
-
-    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles='xy', scale_units='xy', color="silver",
-               scale=(1 / distanceDeuxPoints(origine[0][0], origine[1][0], impact[0][0], impact[1][0]))+0.05)
-    origine = impact
-    vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
+def environEgal(val1,val2):
+    #permet de d'arrondir les valeurs obenue qui sont parfois trop imprécises.
+    return (math.sqrt((val1-val2)**2) < 0.1)
 
 
-
+def verficarteurDeFin(impact):
+    if (environEgal(0,impact[0]) and impact[1]>8 and impact[1]<10) :
+        construireSegments(mursEtCheminAffichés)
+        plt.title("YOU LOST IN " + str(nombreImapcts)+" IMPACTS")
+    if (nombreImapcts>=difficulté):
+        construireSegments(mursEtCheminAffichés)
+        plt.title("YOU LOST IN" + str(nombreImapcts)+" IMPACTS")
+    if ((environEgal(10,impact[0]) and impact[1]>0 and impact[1]<2)) :
+        construireSegments(mursEtCheminAffichés)
+        plt.title("YOU WIN IN " + str(nombreImapcts)+" IMPACTS")
+    return not ((environEgal(0,impact[0]) and impact[1]>8 and impact[1]<10) or ((environEgal(10,impact[0]) and impact[1]>0 and impact[1]<2)) or nombreImapcts>difficulté)
 
 def construireSegments (liste) :
     for mur in liste:
         x = np.linspace(mur[0, :][0], mur[0, :][1], 2)
         y = np.linspace(mur[1, :][0], mur[1, :][1], 2)
         plt.scatter(x, y)
-        plt.plot(x, y)
+        plt.plot(x, y,color ='black')
 
-construireSegments(listemur)
-construireSegments(map)
+def construirChemin (liste) :
+    for seg in liste:
+        plt.plot([origine[0][0], impact[0][0]], [origine[1][0], impact[1][0]])
+        plt.pause(0.1)
+
+while True:
+
+    listeImpactes = []
+
+    for segment in tousLesMurs:
+        listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
+    impact, indiceMur = trouvePlusProche(origine, listeImpactes)
+
+    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles='xy', scale_units='xy',color="silver",
+               scale=(3))
+
+    plt.plot([origine[0][0],impact[0][0]],[origine[1][0],impact[1][0]])
+
+    x = construireDroite(origine[0][0],impact[0][0],origine[1][0],impact[1][0])
+    #mursEtCheminAffichés.append(x)
+
+    print(mursEtCheminAffichés)
+    construireSegments(mursEtCheminAffichés)
+    plt.pause(0.5)
+    origine = impact
+    if (verficarteurDeFin(impact)==False):
+        break
+    nombreImapcts += 1
+    plt.suptitle(str(nombreImapcts) + " IMPACTS!")
+    vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
+
+
+#affichage
+
 
 
 def construireDroite(x1, y1, x2, y2):
@@ -183,8 +200,5 @@ def construireDroite(x1, y1, x2, y2):
                      [y1, y2]])
 
 
-
 plt.show()
-
-
 
