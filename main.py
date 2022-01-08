@@ -5,8 +5,6 @@ import numpy as np
 import matplotlib.lines as mlines
 from matplotlib.animation import FuncAnimation
 
-translation = None
-
 # Trouve T
 def calculT(origineVecteur, vecteur, droite):
     droiteAS = np.array([[droite[0][0], origineVecteur[0][0]],
@@ -25,10 +23,13 @@ def toucheLaDroite(origineVecteur, vecteur, droite):
         return None
     x = origineVecteur[0][0] + t * vecteur[0][0]
     y = origineVecteur[1][0] + t * vecteur[1][0]
-    if(x < 0.0001):
+    if(x < 0.01):
         x = 0
-    if(y < 0.0001):
+    if(y < 0.01):
         y = 0
+    x = round(x, 2)
+    y = round(y, 2)
+    print(x, y)
     if (x <= max(droite[0, :][0], droite[0, :][1]) and x >= min(droite[0, :][0], droite[0, :][1])
     and y <= max(droite[1, :][0], droite[1, :][1]) and y >= min(droite[1, :][0], droite[1, :][1])):
         return np.array([[(x)],
@@ -102,6 +103,9 @@ def get_key(val, liste):
          if val == value:
              return key
 
+def distanceDeuxPoints(x1, y1, x2, y2):
+    return math.sqrt(((x2 - x1) ** 2) + ((y2 - y1) ** 2))
+
 def trouvePlusProche(origine, liste):
     clésDistance = []
     valeursDistances = []
@@ -111,10 +115,6 @@ def trouvePlusProche(origine, liste):
                 valeursDistances.append((math.sqrt(((origine[0][0] - point[0][0])**2) + ((origine[1][0] - point[1][0])**2))))
                 clésDistance.append(i)
         i += 1
-
-    for v in valeursDistances:
-        if v <= 0.01:
-            valeursDistances.remove(v)
 
     plusPetit = valeursDistances[0]
 
@@ -136,10 +136,10 @@ sortie = construireDroite(10, 0, 10, 2)
 
 listemur = [mur1,mur2,mur3, mur4]
 endCond = [entree,sortie]
-segx1 = construireDroite(5, 10, 5, 7)
-segx2 = construireDroite(2, 5, 0, 5)
-segx3 = construireDroite(7, 5, 7, 1)
-segx4 = construireDroite(8, 6, 10, 6)
+segx1 = construireDroite(3, 3, 3, 10)
+segx2 = construireDroite(7, 3, 3, 3)
+segx3 = construireDroite(7, 10, 7, 7)
+segx4 = construireDroite(8, 2, 8, 6)
 
 map = [segx1,segx2,segx3,segx4]
 
@@ -148,22 +148,21 @@ tousLesMurs = map+listemur
 vdir = vDirecteur(construireDroite(0,9,1,9))
 # rotationVecteur(vect, impact, theta):
 
-vecteur = np.array([[1],[2]])
+vecteur = np.array([[1],[-2.1]])
 origine = np.array([[0],[9]])
-impact = np.array([[-1], [-99999]]) 
-
-for i in range(10):
+impact = np.array([[0], [9]])
+ancienOrgine = origine
+for i in range(15):
+    print("-*********************")
     listeImpactes = []
-
-    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles = 'xy', scale_units = 'xy', scale = 1)
+    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles = 'xy', scale_units = 'xy', scale = 2)
 
     for segment in tousLesMurs:
         listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
 
     impact, indiceMur = trouvePlusProche(origine, listeImpactes)
-
+    ancienOrgine = origine
     vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
-
     origine = impact
 
 
