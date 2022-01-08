@@ -29,7 +29,6 @@ def toucheLaDroite(origineVecteur, vecteur, droite):
         y = 0
     x = round(x, 2)
     y = round(y, 2)
-    print(x, y)
     if (x <= max(droite[0, :][0], droite[0, :][1]) and x >= min(droite[0, :][0], droite[0, :][1])
     and y <= max(droite[1, :][0], droite[1, :][1]) and y >= min(droite[1, :][0], droite[1, :][1])):
         return np.array([[(x)],
@@ -143,24 +142,50 @@ segx4 = construireDroite(8, 2, 8, 6)
 
 map = [segx1,segx2,segx3,segx4]
 
-tousLesMurs = map+listemur
+tousLesMurs = map+listemur+endCond
 
 vdir = vDirecteur(construireDroite(0,9,1,9))
 # rotationVecteur(vect, impact, theta):
 
-vecteur = np.array([[1],[-2.1]])
+vecteur = np.array([[1],[-2]])
 origine = np.array([[0],[9]])
-impact = np.array([[0], [9]])
+impact = np.array([[0.5], [9]])
 ancienOrgine = origine
-for i in range(15):
-    print("-*********************")
+
+
+
+
+
+
+nombreImapcts = 0
+difficulté = 15
+def verficarteurDeFin(impact):
+    print(impact)
+    if (environEgal(0,impact[0]) and impact[1]>8 and impact[1]<10) :
+        print("you lost :(")
+    if (nombreImapcts>difficulté):
+        print("Too many  bounces :c")
+    if ((environEgal(10,impact[0]) and impact[1]>0 and impact[1]<2)) :
+        print("you won ! ")
+
+    return not ((environEgal(0,impact[0]) and impact[1]>8 and impact[1]<10) or ((environEgal(10,impact[0]) and impact[1]>0 and impact[1]<2)) or nombreImapcts>difficulté)
+
+def environEgal(val1,val2):
+    return (math.sqrt((val1-val2)**2) < 0.1)
+
+while True:
+
     listeImpactes = []
-    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles = 'xy', scale_units = 'xy', scale = 2)
+    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles = 'xy', scale_units = 'xy', scale = 1)
 
     for segment in tousLesMurs:
         listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
 
     impact, indiceMur = trouvePlusProche(origine, listeImpactes)
+
+    if (verficarteurDeFin(impact) == False):
+        break;
+    nombreImapcts=nombreImapcts+1
     ancienOrgine = origine
     vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
     origine = impact
@@ -174,8 +199,8 @@ def construireSegments (liste) :
         plt.scatter(x, y)
         plt.plot(x, y)
 
-construireSegments(listemur)
-construireSegments(map)
+construireSegments(listemur+map)
+
 
 
 def construireDroite(x1, y1, x2, y2):
