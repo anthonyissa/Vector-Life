@@ -29,7 +29,6 @@ def toucheLaDroite(origineVecteur, vecteur, droite):
         y = 0
     x = round(x, 2)
     y = round(y, 2)
-    print(x, y)
     if (x <= max(droite[0, :][0], droite[0, :][1]) and x >= min(droite[0, :][0], droite[0, :][1])
     and y <= max(droite[1, :][0], droite[1, :][1]) and y >= min(droite[1, :][0], droite[1, :][1])):
         return np.array([[(x)],
@@ -136,34 +135,35 @@ sortie = construireDroite(10, 0, 10, 2)
 
 listemur = [mur1,mur2,mur3, mur4]
 endCond = [entree,sortie]
-segx1 = construireDroite(3, 3, 3, 10)
-segx2 = construireDroite(7, 3, 3, 3)
-segx3 = construireDroite(7, 10, 7, 7)
-segx4 = construireDroite(8, 2, 8, 6)
+segx1 = construireDroite(1, 3, 4, 1)
+segx2 = construireDroite(7, 8, 5, 3)
+segx3 = construireDroite(7, 1, 7, 3)
+segx4 = construireDroite(6, 8, 3, 9)
 
 map = [segx1,segx2,segx3,segx4]
 
-tousLesMurs = map+listemur
+tousLesMurs = map+listemur+endCond
 
 vdir = vDirecteur(construireDroite(0,9,1,9))
 # rotationVecteur(vect, impact, theta):
 
-vecteur = np.array([[1],[-2.1]])
+vecteur = np.array([[1],[0.5]])
 origine = np.array([[0],[9]])
 impact = np.array([[0], [9]])
 ancienOrgine = origine
-for i in range(15):
-    print("-*********************")
+for i in range(10):
     listeImpactes = []
-    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles = 'xy', scale_units = 'xy', scale = 2)
 
     for segment in tousLesMurs:
         listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
 
     impact, indiceMur = trouvePlusProche(origine, listeImpactes)
-    ancienOrgine = origine
-    vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
+
+    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles='xy', scale_units='xy', color="silver",
+               scale=(1 / distanceDeuxPoints(origine[0][0], origine[1][0], impact[0][0], impact[1][0]))+0.05)
     origine = impact
+    vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
+
 
 
 
