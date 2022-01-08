@@ -135,10 +135,10 @@ sortie = construireDroite(10, 0, 10, 2)
 
 listemur = [mur1,mur2,mur3, mur4]
 endCond = [entree,sortie]
-segx1 = construireDroite(3, 3, 3, 10)
-segx2 = construireDroite(7, 3, 3, 3)
-segx3 = construireDroite(7, 10, 7, 7)
-segx4 = construireDroite(8, 2, 8, 6)
+segx1 = construireDroite(1, 3, 4, 1)
+segx2 = construireDroite(7, 8, 5, 3)
+segx3 = construireDroite(7, 1, 7, 3)
+segx4 = construireDroite(6, 8, 3, 9)
 
 map = [segx1,segx2,segx3,segx4]
 
@@ -147,48 +147,23 @@ tousLesMurs = map+listemur+endCond
 vdir = vDirecteur(construireDroite(0,9,1,9))
 # rotationVecteur(vect, impact, theta):
 
-vecteur = np.array([[1],[-2]])
+vecteur = np.array([[1],[0.5]])
 origine = np.array([[0],[9]])
-impact = np.array([[0.5], [9]])
+impact = np.array([[0], [9]])
 ancienOrgine = origine
-
-
-
-
-
-
-nombreImapcts = 0
-difficulté = 15
-def verficarteurDeFin(impact):
-    print(impact)
-    if (environEgal(0,impact[0]) and impact[1]>8 and impact[1]<10) :
-        print("you lost :(")
-    if (nombreImapcts>difficulté):
-        print("Too many  bounces :c")
-    if ((environEgal(10,impact[0]) and impact[1]>0 and impact[1]<2)) :
-        print("you won ! ")
-
-    return not ((environEgal(0,impact[0]) and impact[1]>8 and impact[1]<10) or ((environEgal(10,impact[0]) and impact[1]>0 and impact[1]<2)) or nombreImapcts>difficulté)
-
-def environEgal(val1,val2):
-    return (math.sqrt((val1-val2)**2) < 0.1)
-
-while True:
-
+for i in range(10):
     listeImpactes = []
-    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles = 'xy', scale_units = 'xy', scale = 1)
 
     for segment in tousLesMurs:
         listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
 
     impact, indiceMur = trouvePlusProche(origine, listeImpactes)
 
-    if (verficarteurDeFin(impact) == False):
-        break;
-    nombreImapcts=nombreImapcts+1
-    ancienOrgine = origine
-    vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
+    plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles='xy', scale_units='xy', color="silver",
+               scale=(1 / distanceDeuxPoints(origine[0][0], origine[1][0], impact[0][0], impact[1][0]))+0.05)
     origine = impact
+    vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
+
 
 
 
@@ -199,8 +174,8 @@ def construireSegments (liste) :
         plt.scatter(x, y)
         plt.plot(x, y)
 
-construireSegments(listemur+map)
-
+construireSegments(listemur)
+construireSegments(map)
 
 
 def construireDroite(x1, y1, x2, y2):
