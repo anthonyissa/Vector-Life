@@ -25,7 +25,10 @@ def toucheLaDroite(origineVecteur, vecteur, droite):
         return None
     x = origineVecteur[0][0] + t * vecteur[0][0]
     y = origineVecteur[1][0] + t * vecteur[1][0]
-
+    if(x < 0.0001):
+        x = 0
+    if(y < 0.0001):
+        y = 0
     if (x <= max(droite[0, :][0], droite[0, :][1]) and x >= min(droite[0, :][0], droite[0, :][1])
     and y <= max(droite[1, :][0], droite[1, :][1]) and y >= min(droite[1, :][0], droite[1, :][1])):
         return np.array([[(x)],
@@ -38,7 +41,7 @@ def toucheLaDroite(origineVecteur, vecteur, droite):
     if((impact[0][0] == sortie[0][0] and impact[1][0] <= 2 ) or
     (impact[0][0] == entree[0][0] and impact[1][0] >= 8 ))
         return True
-    else:   
+    else:   3
         return False"""
 
 
@@ -110,7 +113,7 @@ def trouvePlusProche(origine, liste):
         i += 1
 
     for v in valeursDistances:
-        if v <= 0.1:
+        if v <= 0.01:
             valeursDistances.remove(v)
 
     plusPetit = valeursDistances[0]
@@ -133,10 +136,10 @@ sortie = construireDroite(10, 0, 10, 2)
 
 listemur = [mur1,mur2,mur3, mur4]
 endCond = [entree,sortie]
-segx1 = construireDroite(3, 10, 6, 7)
-segx2 = construireDroite(2.2, 5, 3, 4.31)
-segx3 = construireDroite(6.96, 5.43, 7.5, 3.21)
-segx4 = construireDroite(3.42, 2.19, 4.94, 0.55)
+segx1 = construireDroite(5, 10, 5, 7)
+segx2 = construireDroite(2, 5, 0, 5)
+segx3 = construireDroite(7, 5, 7, 1)
+segx4 = construireDroite(8, 6, 10, 6)
 
 map = [segx1,segx2,segx3,segx4]
 
@@ -145,17 +148,20 @@ tousLesMurs = map+listemur
 vdir = vDirecteur(construireDroite(0,9,1,9))
 # rotationVecteur(vect, impact, theta):
 
-vecteur = np.array([[1],[0.2]])
+vecteur = np.array([[1],[2]])
 origine = np.array([[0],[9]])
 impact = np.array([[-1], [-99999]]) 
 
-for i in range(2):
+for i in range(10):
     listeImpactes = []
+
     plt.quiver(origine[0][0], origine[1][0], vecteur[0][0], vecteur[1][0], angles = 'xy', scale_units = 'xy', scale = 1)
+
     for segment in tousLesMurs:
         listeImpactes.append(toucheLaDroite(origine, vecteur, segment))
 
     impact, indiceMur = trouvePlusProche(origine, listeImpactes)
+
     vecteur = rotationVecteur(vecteur, impact, vNormal(vDirecteur(tousLesMurs[indiceMur])))
 
     origine = impact
