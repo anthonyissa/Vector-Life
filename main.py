@@ -1,6 +1,6 @@
 import math
 import time
-
+import mapGenerator
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.lines as mlines
@@ -56,7 +56,6 @@ def vNormal(vecteur):
                      [vecteur[0, :][0]]])
 
 
-
 def vDirecteur(droite):
     return np.array([[droite[:, 1][0] - droite[:, 0][0]],
                      [droite[:, 1][1] - droite[:, 0][1]]])
@@ -102,34 +101,36 @@ def trouvePlusProche(origine, liste):
             plusPetit = d
 
     return liste[clésDistance[valeursDistances.index(plusPetit)]], clésDistance[valeursDistances.index(plusPetit)]
-    
-#mapping
-mur1 = construireDroite(0, 0, 0, 8)
-mur2 = construireDroite(0, 10, 10, 10)
-mur3 = construireDroite(10, 10, 10, 2)
-mur4 = construireDroite(10, 0, 0, 0)
-listeDesMur = [mur1, mur2, mur3, mur4]
 
-entree = construireDroite(0, 8, 0, 10)
-sortie = construireDroite(10, 0, 10, 2)
-endCond = [entree, sortie]
-
-segx1 = construireDroite(1, 3, 4, 1)
-segx2 = construireDroite(7, 8, 5, 3)
-segx3 = construireDroite(7, 1, 7, 3)
-segx4 = construireDroite(6, 8, 3, 9)
-map = [segx1, segx2, segx3, segx4]
-
-tousLesMurs = map + listeDesMur + endCond
-mursEtCheminAffichés = map + listeDesMur
-vdir = vDirecteur(construireDroite(0,9,1,9))
-# rotationVecteur(vect, impact, theta):
 def construireSegments (liste) :
     for mur in liste:
         x = np.linspace(mur[0, :][0], mur[0, :][1], 2)
         y = np.linspace(mur[1, :][0], mur[1, :][1], 2)
         plt.scatter(x, y)
         plt.plot(x, y,color ='black')
+#mapping
+mur1 = construireDroite(0, 0, 0, 8)
+mur2 = construireDroite(0, 10, 10, 10)
+mur3 = construireDroite(10, 10, 10, 2)
+mur4 = construireDroite(10, 0, 0, 0)
+#premier affichage des murs
+listeDesMur = [mur1, mur2, mur3, mur4]
+construireSegments(listeDesMur)
+plt.pause(0.1)
+
+entree = construireDroite(0, 8, 0, 10)
+sortie = construireDroite(10, 0, 10, 2)
+endCond = [entree, sortie]
+
+
+
+print("SELECTIONNEZ UNE CARTE : 1 2 OU 3 ")
+map,difficulté = mapGenerator.getmap(int(input()))
+tousLesMurs = map + listeDesMur + endCond
+mursEtCheminAffichés = map + listeDesMur
+vdir = vDirecteur(construireDroite(0,9,1,9))
+# rotationVecteur(vect, impact, theta):
+
 
 construireSegments(mursEtCheminAffichés)
 plt.pause(0.1)
@@ -142,7 +143,7 @@ impact = np.array([[0.2], [9]])
 ancienOrgine = origine
 
 nombreImapcts = 0
-difficulté = 15
+
 
 def environEgal(val1,val2):
     #permet de d'arrondir les valeurs obenue qui sont parfois trop imprécises.
@@ -152,21 +153,16 @@ def environEgal(val1,val2):
 def verficarteurDeFin(impact):
     if (environEgal(0,impact[0]) and impact[1]>8 and impact[1]<10) :
         construireSegments(mursEtCheminAffichés)
-        plt.title("YOU LOST IN " + str(nombreImapcts)+" IMPACTS")
+        plt.title("YOU LOST IN " + str(nombreImapcts-1)+" IMPACTS")
     if (nombreImapcts>=difficulté):
         construireSegments(mursEtCheminAffichés)
-        plt.title("YOU LOST IN" + str(nombreImapcts)+" IMPACTS")
+        plt.title("YOU LOST IN" + str(nombreImapcts-1)+" IMPACTS")
     if ((environEgal(10,impact[0]) and impact[1]>0 and impact[1]<2)) :
         construireSegments(mursEtCheminAffichés)
         plt.title("YOU WIN IN " + str(nombreImapcts)+" IMPACTS")
     return not ((environEgal(0,impact[0]) and impact[1]>8 and impact[1]<10) or ((environEgal(10,impact[0]) and impact[1]>0 and impact[1]<2)) or nombreImapcts>difficulté)
 
 
-
-def construirChemin (liste) :
-    for seg in liste:
-        plt.plot([origine[0][0], impact[0][0]], [origine[1][0], impact[1][0]])
-        plt.pause(0.1)
 
 while True:
 
